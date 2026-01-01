@@ -21,7 +21,7 @@ and so forth. For some challenges I crafted a few more examples for testing, suc
 - `09-1example2.txt` → Day 9, Part 1 second example input
 - `09-1example2.ps1` → script to generate that file's contents
 
-Challenge instructions and my actual competition input files are **not** included, because the creators specifically [asked](https://adventofcode.com/2025/about) that we not copy nor share those. Please refer to the [Advent of Code](https://adventofcode.com/) website to compete and get official input data files of your very own.
+Challenge instructions and my actual competition input files are **not** included, because the creators specifically [asked](https://adventofcode.com/2025/about) that we not copy nor share those. Please refer to the [Advent of Code](https://adventofcode.com/) web site to compete and get official input data files of your very own.
 
 ## How to run
 

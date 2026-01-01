@@ -1,0 +1,192 @@
+[0] 7,1
+[1] 2,3
+[2] 2,5
+[3] 7,3
+[4] 9,5
+[5] 9,7
+[6] 11,7
+[7] 11,1
+
+During week 1, you learned to use Get-Help to read documentation about cmdlets and functions. A few weeks later, you learned how to document your functions with special comment blocks <# .SYNOPSIS, etc. #> that are parsed by Get-Help. How do you write similar documentation for a class? Craft a quality prompt for your generative AI chatbot to teach you. Use what you learn to properly document the MACAddress class you wrote for your networking module, so that a user can use Get-Help to learn about it and learn what to do with it. After implementing all of the appropriate advice that you received from your AI, increment a number (minor or patch) in your module's version number and republish your module.
+
+[0] 9,1
+[1] 7,1
+[2] 3,1
+[3] 1,2
+[4] 1,4
+[5] 1,5
+[6] 6,3
+[7] 3,5
+[8] 4,5
+[9] 6,4
+[10] 3,7
+[11] 6,8
+[12] 8,8
+[13] 9,6
+[14] 9,8
+[15] 10,5
+[16] 12,8
+[17] 11,4
+[18] 13,7
+
+transitions: expand left, expand right, contract left, contract right
+      #*#    #*#      #***?    ?***#
+	#*#**    **#*#    #*#**    **#*#
+	#***?    ?***#      #*#    #*#
+
+Expand Left:
+  next right same as previous left & next left lower than previous left;
+  keep right samme, adjust left farther
+Expand Right:
+  next left same as previous right & next right higher than previous right;
+  keep left same, adjust right farther
+Contract Left:
+  next left same as previous right & next left higher than previous left;
+  keep right same, adjust left nearer
+Contract Right:
+  next right same as previous left & next right lower than previous right;
+  keep left same, adjust right nearer
+
+desired output:
+1,1  10,3
+1,3  7,5
+1,5  12,7
+1,7  15,9
+5,9  15,11
+3,11 15,13
+3,13 15,15
+
+
+-----
+  global (or script) scope:
+buttons: [0](3) [1](1,3) [2](2) [3](2,3) [4](0,2) [5](0,1)  # lamps per button
+dual: [0](4,5) [1](1,5) [2](2,3,4) [3](0,1,3)  # buttons per lamp
+targets: {3,5,4,7}
+results: (start with empty array of pushes)
+
+  local scope (passed through recursion, use [System.Array]::Copy to pass these by value):
+squeezes: {3,5,4,7} pushes: {0,0,0,0,0,0}
+  local scope (within recursive function):
+maxTarget,maxIndex
+
+recursivefunction(parameters squeezes, pushes)
+find min=3, minIndex=0, minButtons=(4,5).
+for each minButton,
+  for p=(3(min) down to 1),
+    push minButton p times
+	if no squeeze busted,
+      pushes[minButtons] += p
+      if all squeezes achieved targets (found! append to results, return)
+      else copy pushes & squeezes,
+	    recursivefunction(pushes, squeezes)
+return
+
+>> first depth {3,5,4,7},{0,0,0,0,0,0}
+min=3,minIndex=0,minButtons=(4,5)
+minButton=4,p=3: {0,5,1,7}, {0,0,0,0,3,0}
+>> second depth
+min=1,minIndex=2,minButtons=(2,3,4)
+minButton=2,p=1: {0,5,0,7}, {0,0,1,0,3,0}
+>> third depth
+min=5,minIndex=1,minButtons=(1,5)
+minButton=1,p=5: {0,0,0,2}, {0,5,1,0,3,0}
+>> fourth depth
+min=2,minIndex=3,minButtons=(0,1,3)
+minButton=0,p=2: {0,0,0,0}, {2,5,1,0,3,0}  - found
+>> fourth depth
+minButton=1,p=2: {0,-2,0,0} -- bust
+>> fourth depth
+minButton=3,p=2: {0,0,-2,0} -- bust
+>> third depth
+
+
+
+
+
+
+squeezes = {3,5,4,7}
+min = 3, minIndex = 0 (first dual)
+for each candidate, push it up to min times
+
+>> second depth 1: buttoncandidates = (4,5) == (0,2),(0,1)  *
+push button 4 x3:
+squeeze = {3,5,4,7} -> {0,5,1,7}
+min = 1, minIndex = 2
+
+>> third depth 1: buttoncandidates (2,3,4) == (2),(2,3),(0,2)  *
+push button 2 x1:
+squeeze = {0,5,1,7} -> {0,5,0,7}
+min = 5, minindex = 1
+
+>> fourth depth 1: buttonCandidates = (1,5) == (1,3),(0,1)  *
+push button 1 x5
+squeeze = {0,5,0,7} -> {0,0,0,2}
+min = 2, minIndex = 3
+
+>> fifth depth 1: buttonCandidates = (0,1,3) == (3),(1,3),(2,3)  *
+push button 0 x2:
+squeeze = {0,0,0,2} -> {0,0,0,0} *** found, 3+1+5+2 == 11
+
+>> fourth depth 2: buttonCandidates = (1,5) == (1,3),(0,1)
+push putton 5 x1:
+squeeze = {0,5,0,7} -> {-1,0,0,7} XXX
+
+>> third depth 2: buttonCandidates = (2,3,4) == (2),(2,3),(0,2)
+push button 3 x1:
+squeeze = {0,5,1,7} -> {0,5,0,6}   .. and so forth recursively...
+
+
+simplex?
+-----
+  global (or script) scope:
+buttons: [0](3) [1](1,3) [2](2) [3](2,3) [4](0,2) [5](0,1)  # lamps per button
+dual: [0](4,5) [1](1,5) [2](2,3,4) [3](0,1,3)  # buttons per lamp
+targets: {3,5,4,7}
+
+minimize c0+c1+c2+c3+c4+c5 such that
+
+c4+c5 == 3,
+c1+c5 == 5,
+c2+c3+c4 == 4,
+c0+c1+c3 == 7
+
+find all n1..nk such that sum(n1..nk) == t?
+k=2:
+  n1=0, n2=t through n1=k, n2=0
+
+k=3:
+  n1=0, case k=2 through n1=k, case k=2
+
+
+7
+
+(0,7),(1,6),(2,5),(3,4),(4,3),(5,2),(6,1),(7,0)
+
+(0,0,7),(0,1,6),(0,2,5),(0,3,4),(0,4,3),(0,5,2),(0,6,1),(0,7,0),
+(1,0,6),(1,1,5),(1,2,4),(1,3,3),(1,4,2),(1,5,1),(1,6,0),
+
+12-1 notes
+
+0:  1:  2:  3:  4:  5:   enclosures: 35x35 to 50x50
+##. #.# #.# # # ### ..#
+.## ### ### # # .## ###
+..# #.# .## ### ..# ###    tighter packs:
+
+*** tesselate | **. tesselate | **. tesselate | ***. tesselate
+#** two 4s    | #** two 0s    | #** a 0 and 4 | *#*# two 3s
+##* fills 3x4 | ##* fills 3x4 | ##* fills 3x4 | *#*# fills 4x4
+### (-0)      | .## (-2)      | ### (-1)      | .### (-2)    
+
+*.* tesselate | *** tesselate | *.*. tesselate  | *.*. tesselate
+*** a 2 and 5 | *** two 5s    | ***. two 1s     | ***. a 1 and 2
+**# fills 3x5 | *.# fills 3x5 | *#*# fills 4x5  | *#*# fills 4x5
+### (-1)      | ### (-1)      | .### (-4)       | .### (-5)
+###           | ###           | .#.# stk-+ (-2) | ..##
+
+.+++           |.++.           |
+**++ two 4s    |**++ two 0s    |
+***+ two 2s    |***+ two 2s    |
+*#*# fills 4x7 |*#*# fills 4x7 |
++### (-2)      |+### (-4)      |
+++##           |++##           |
++++.           |.++.           |

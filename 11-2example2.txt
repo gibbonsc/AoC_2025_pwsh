@@ -1,0 +1,14 @@
+svr: aaa bbb you
+aaa: bbb you
+bbb: you
+you: fft
+fft: ccc tty
+ccc: ddd eee tty
+tty: hub
+ddd: hhh
+hub: fff
+eee: dac
+dac: fff
+fff: ggg hhh
+ggg: out
+hhh: out

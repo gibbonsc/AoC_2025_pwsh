@@ -1,0 +1,31 @@
+you: svr
+svr: aa1 bb1
+aa1: cc1 cc2
+cc1: fft
+cc2: fft
+bb1: cc2 cc3
+cc3: fft
+fft: dd1 dd2
+dd1: ee1 ee2
+dd2: ee3 ee4
+ee1: ff1
+ee2: ff2
+ee3: hub
+ee4: tty
+ff1: hub
+ff2: tty
+hub: gg1 gg2
+tty: gg3 gg4
+gg1: dac
+gg2: hh1
+gg3: hh2
+gg4: ii2
+dac: ii1
+hh1: ii2
+hh2: ii3
+ii1: jj1
+ii2: jj2
+ii3: jj3
+jj1: out
+jj2: out
+jj3: out
